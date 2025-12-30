@@ -86,19 +86,7 @@ _Processing progress and status indicators (short animation recommended as GIF).
 
 ---
 
-## Adding images to the README
-Images can be placed in a repository folder (for example `assets/` or `docs/screenshots/`) and referenced via relative paths:
 
-```markdown
-![caption](assets/asset01.png)
-```
-
-Notes:
-- Use PNG for screenshots and GIF for short animations.
-- Keep images reasonably sized so GitHub renders them quickly.
-- When editing README on GitHub, images can be dragged into the editor — GitHub uploads them and inserts the Markdown link automatically.
-
----
 
 ## Tests & next steps
 - Diagnostics and auto‑fix functionality are implemented and available in the notebook and CLI.
