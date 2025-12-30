@@ -1,59 +1,58 @@
 # HairRemoval_of_DermoscopicImages
-A compact, CV-based pipeline for removing hair artifacts from dermoscopic images using classic image processing and inpainting techniques.
+A compact computer‑vision pipeline for removing hair artifacts from dermoscopic images using classic image processing and inpainting.
 
 ---
 
-## 📌 Project status (short)
-- Core hair-removal pipeline implemented and tested in `experiments/experiments.ipynb` (Top‑Hat → Brightening → Flat‑Field Correction → Thresholding → Morphological Cleaning → Iterative Inpainting + Verification).
-- Robustness improvements added: diagnostic helpers, an **auto-fix** parameter sweep, multi-channel processing, edge fusion, and iterative inpainting that escalates radius/method if residual hair persists.
-- Engine refactor: `src/remove.py` exposes `remove_hairs_from_rgb(img_rgb, progress_callback=None)` which returns `(hair_free_image, final_mask, stats)` and supports progress callbacks (for UI integration).
-- Streamlit UI: `app.py` (in-memory processing, no disk writes by default) — upload, run, view before/after, preview mask, and download the clean image.
-- CLI helper: `scripts/hair_removal_auto_fix.py` for batch runs and diagnostic dumps.
+## Status (short)
+- Core pipeline implemented and demonstrated in `experiments/experiments.ipynb` (Top‑Hat → Brightening → Flat‑Field Correction → Thresholding → Morphological Cleaning → Iterative Inpainting + Verification).
+- Robustness improvements added: diagnostic helpers, an **auto-fix** parameter sweep, multi‑channel processing, edge fusion, and iterative inpainting that escalates radius/method if residual hair persists.
+- Engine refactor: `src/remove.py` exposes `remove_hairs_from_rgb(img_rgb, progress_callback=None)` returning `(hair_free_image, final_mask, stats)` and supports progress callbacks for integration.
+- Streamlit UI: `app.py` performs in‑memory processing (no disk writes unless explicitly requested), displays before/after, mask preview, and provides a download button.
+- CLI helper: `scripts/hair_removal_auto_fix.py` for batch processing and diagnostics.
 
 ---
 
-## 🚀 Quick start
-1. Install dependencies (recommended from the repo environment):
+## Quick start
+Dependencies can be installed from the included requirements file:
 
 ```bash
 pip install -r requirements.txt
-# or minimal:
-# pip install streamlit opencv-python numpy pillow
+# or (minimal): pip install streamlit opencv-python numpy pillow
 ```
 
-2. Run the Streamlit UI (recommended for interactive use):
+Run the interactive UI:
 
 ```bash
 streamlit run app.py
 ```
 
-3. Use the CLI for batch/diagnostic runs:
+A CLI mode is available for scripted runs:
 
 ```bash
 python scripts/hair_removal_auto_fix.py --input path/to/image.jpg --output out.jpg
 ```
 
-Note: The Streamlit UI calls `remove_hairs_from_rgb` and keeps processed images in memory for immediate download (no files are left on disk unless you explicitly save them).
+The UI keeps the processed images in memory for immediate download; files are not saved to disk by default.
 
 ---
 
-## 🧠 How it works (high level)
-Stages in the pipeline:
+## How it works (brief)
+Pipeline stages:
 1. Load & resize
-2. Hair enhancement (Black top-hat on each channel)
+2. Hair enhancement (black top‑hat per channel)
 3. Local brightening
-4. Flat‑field correction (optional; can be reduced/skipped in the auto-fix)
-5. Thresholding (Otsu by default; adaptive/manual available in auto-fix)
-6. Morphological cleaning + connected-component filtering
-7. Iterative inpainting (Telea / Navier‑Stokes; escalate radius / method if hair persists)
-8. Selective detail-preserving enhancement (denoising, CLAHE, light sharpening)
+4. Flat‑field correction (optional in auto‑fix)
+5. Thresholding (Otsu by default; adaptive/manual available)
+6. Morphological cleaning + connected component filtering
+7. Iterative inpainting (Telea / Navier‑Stokes; escalate if needed)
+8. Selective detail‑preserving enhancement (denoise, CLAHE, light sharpening)
 
-The notebook `experiments/experiments.ipynb` contains diagnostic visualizations and the **auto-fix** runner that tries progressively stronger parameters until the mask/inpainting verification is satisfactory.
+The notebook includes diagnostic visualizations and an **auto‑fix** routine that tries progressively stronger parameter sets until verification passes.
 
 ---
 
-## 🧩 Engine API
-Use the engine programmatically:
+## Engine API
+The engine is callable from Python:
 
 ```python
 from src.remove import remove_hairs_from_rgb
@@ -61,56 +60,66 @@ from src.remove import remove_hairs_from_rgb
 hair_free, mask, stats = remove_hairs_from_rgb(img_rgb, progress_callback=my_callback)
 ```
 
-- `img_rgb`: H×W×3 uint8 RGB image (numpy array)
-- `progress_callback(status_string)`: optional; used by the Streamlit UI to show progress (strings include `enhancement_done`, `thresholding_done`, `cleaning_done`, `inpainting`, `complete`)
+- `img_rgb`: H×W×3 uint8 RGB numpy array
+- `progress_callback(status_string)`: optional; status strings include `enhancement_done`, `thresholding_done`, `cleaning_done`, `inpainting`, `complete`
 - Returns:
   - `hair_free`: cleaned RGB image (uint8)
-  - `mask`: final binary mask (uint8) where white pixels indicate detected hair
-  - `stats`: dictionary with performance metrics (initial/final coverage, PSNR, etc.)
+  - `mask`: final binary mask (uint8)
+  - `stats`: dict with coverage and quality metrics (initial/final coverage, PSNR, etc.)
 
 ---
 
-## 🖼️ Adding UI screenshots or GIFs to this README
-To include images or animated GIFs (recommended for showing the processing animation), do the following:
+## Screenshots
+Repository assets include UI screenshots used below (files found in `assets/`).
 
-1. Create a folder for visuals, e.g., `docs/screenshots` or `assets/` and add images there (commit them to the repo).
-2. Reference them in Markdown with relative paths. Example:
+![App main screen](assets/asset01.png)
+_App main screen — upload, run, and view results._
+
+![Before vs After](assets/asset02.png)
+_Before/after comparison and mask._
+
+![Mask preview](assets/asset03.png)
+_Detected hair mask._
+
+![Processing progress GIF](assets/asset04.png)
+_Processing progress and status indicators (short animation recommended as GIF)._ 
+
+---
+
+## Adding images to the README
+Images can be placed in a repository folder (for example `assets/` or `docs/screenshots/`) and referenced via relative paths:
 
 ```markdown
-![Streamlit UI screenshot](docs/screenshots/ui.png)
-![Processing demo GIF](docs/screenshots/demo.gif)
+![caption](assets/asset01.png)
 ```
 
-Tips:
-- Use PNG for screenshots and GIF for short animated demos of progress/animation.
-- Keep files small (resize or compress) so GitHub renders them quickly.
-- You can drag-and-drop images into GitHub when editing README on the website — GitHub will upload and insert the right Markdown link.
+Notes:
+- Use PNG for screenshots and GIF for short animations.
+- Keep images reasonably sized so GitHub renders them quickly.
+- When editing README on GitHub, images can be dragged into the editor — GitHub uploads them and inserts the Markdown link automatically.
 
 ---
 
-## ✅ Tests, QA & next steps
-- Current: Diagnostic routines and auto-fix candidates implemented; the engine is callable and integrated into Streamlit for visual testing.
-- Next: Add a diagnostics panel to the UI (optional) to reveal intermediate images (Top‑Hat, enhanced, threshold), add unit/integration tests for the core engine, and run a final QA sweep across the dataset to ensure the “no residual hair” requirement is met.
+## Tests & next steps
+- Diagnostics and auto‑fix functionality are implemented and available in the notebook and CLI.
+- Planned: add a diagnostics panel to the UI (intermediate images and aggressive auto‑fix toggle), add automated tests for key pipeline functions, and perform a final QA sweep across the dataset.
 
 ---
 
-## 📂 Important files
-- `src/remove.py` — main in-memory engine (callable)
-- `experiments/experiments.ipynb` — exploratory notebook with diagnostics and parameter sweeps
-- `scripts/hair_removal_auto_fix.py` — CLI for batch processing / diagnostics
+## Key files
+- `src/remove.py` — core, in‑memory engine
+- `experiments/experiments.ipynb` — exploratory notebooks and diagnostics
+- `scripts/hair_removal_auto_fix.py` — CLI batch/diagnostics
 - `app.py` — Streamlit UI
 
 ---
 
-## 💬 Contributing
-- Open issues for failing images or to propose algorithm improvements.
-- PRs welcome — please include tests or examples demonstrating improvements.
+## Contributing
+Issues and pull requests are welcome. Include tests or example images when proposing algorithmic changes.
 
 ---
 
-## 📜 License
+## License
 See `LICENSE`.
 
 ---
-
-If you'd like, I can add a small **diagnostics toggle** to the Streamlit UI next (showing Top-Hat, enhanced, Otsu mask and intermediate stats). Want me to add that now?
