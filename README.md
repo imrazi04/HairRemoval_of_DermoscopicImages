@@ -72,17 +72,15 @@ hair_free, mask, stats = remove_hairs_from_rgb(img_rgb, progress_callback=my_cal
 ## Screenshots
 Repository assets include UI screenshots used below (files found in `assets/`).
 
-![App main screen](assets/asset01.png)
+![App main screen]
+<img width="1329" height="701" alt="image" src="https://github.com/user-attachments/assets/a780c432-7591-43ed-b7a9-e682fe31d076" />
+
 _App main screen — upload, run, and view results._
 
-![Before vs After](assets/asset02.png)
+![Before vs After]
+<img width="1235" height="765" alt="image" src="https://github.com/user-attachments/assets/260941e8-4da6-4568-a4b8-937bf35288cf" />
+
 _Before/after comparison and mask._
-
-![Mask preview](assets/asset03.png)
-_Detected hair mask._
-
-![Processing progress GIF](assets/asset04.png)
-_Processing progress and status indicators (short animation recommended as GIF)._ 
 
 ---
 
